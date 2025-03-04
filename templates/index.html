@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>YouTube Comment Analysis</title>
+    <style>
+      .warning {
+        color: red; /* You can customize the styling */
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Enter YouTube Link</h1>
+
+    <!-- Placeholder warning message -->
+    <p class="warning">
+      Please note: This is very early access. Responses may not be optimal!
+    </p>
+
+    <form method="POST">
+      <input
+        type="text"
+        name="youtube_link"
+        placeholder="Enter YouTube link"
+        required
+      />
+      <button type="submit">Submit</button>
+    </form>
+
+    {% if result %}
+    <h2>Result:</h2>
+    <p>{{ result }}</p>
+    <!-- Display the result -->
+    {% endif %}
+  </body>
+</html>
