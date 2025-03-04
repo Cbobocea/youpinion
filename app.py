@@ -8,7 +8,7 @@ from googleapiclient.discovery import build
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from transformers import BertTokenizer, BertModel, pipeline  # Ensure both are imported
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request , send_from_directory
 import re
 from collections import Counter
 from openai.error import RateLimitError
@@ -168,6 +168,9 @@ def home():
         return render_template('index.html', result=result)
 
     return render_template('index.html')
+def favicon():
+    return send_from_directory(os.getcwd(), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
