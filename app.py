@@ -147,6 +147,11 @@ def summarize_comments(comments):
     summary = summarizer(text, max_length=150, min_length=40, do_sample=False)  # Adjust parameters as needed
     return summary[0]['summary_text']  # Extract the summary text
 
+# Route for favicon
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.getcwd(), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 # Flask routes and logic
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -168,8 +173,7 @@ def home():
         return render_template('index.html', result=result)
 
     return render_template('index.html')
-def favicon():
-    return send_from_directory(os.getcwd(), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 
 
 if __name__ == '__main__':
