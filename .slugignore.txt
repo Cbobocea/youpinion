@@ -16,3 +16,5 @@ __pycache__/
 # Ignore any large datasets or unnecessary files
 *.zip
 *.tar.gz
+/venv
+.venv
