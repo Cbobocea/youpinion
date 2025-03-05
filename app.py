@@ -19,7 +19,6 @@ import nltk
 app = Flask(__name__)
 
 # Initialize NLTK stopwords
-nltk.download('stopwords', download_dir='/c/Users/munianio/PycharmProjects1/commentscrape/nltk_data')
 nltk.download('stopwords')
 from nltk.corpus import stopwords
 nltk.data.path.append(os.path.join(os.getcwd(), 'nltk_data'))
