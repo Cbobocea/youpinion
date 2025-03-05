@@ -23,7 +23,7 @@ from nltk.corpus import stopwords
 # Google YouTube API setup
 API_SERVICE_NAME = "youtube"
 API_VERSION = "v3"
-DEVELOPER_KEY = 'your_developer_key_here'
+DEVELOPER_KEY = 'AIzaSyCnuvkeTxoZdFQifWc2624JpN5NvQcYj4Q'
 credentials_path = r'C:\Users\munianio\Downloads\service-account-key.json'  # Change to your path
 
 # Stop words for text processing
@@ -147,10 +147,6 @@ def summarize_comments(comments):
     summary = summarizer(text, max_length=150, min_length=40, do_sample=False)  # Adjust parameters as needed
     return summary[0]['summary_text']  # Extract the summary text
 
-# Route for favicon
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(os.getcwd(), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 # Flask routes and logic
 @app.route('/', methods=['GET', 'POST'])
