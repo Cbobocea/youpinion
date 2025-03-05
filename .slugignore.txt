@@ -1,20 +1,10 @@
-# Ignore NLTK data
 nltk_data/
-
-# Ignore Python cache files
 __pycache__/
 *.pyc
 *.pyo
-
-# Ignore logs
 *.log
-
-# Ignore local environment files
 .env
 *.local
-
-# Ignore any large datasets or unnecessary files
 *.zip
 *.tar.gz
-.venv/
-models/
+models
