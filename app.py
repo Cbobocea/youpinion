@@ -13,12 +13,15 @@ import re
 from collections import Counter
 from openai.error import RateLimitError
 from transformers import BertTokenizer, BertModel, pipeline
+import nltk
+
 
 app = Flask(__name__)
 
 # Initialize NLTK stopwords
 nltk.download('stopwords')
 from nltk.corpus import stopwords
+nltk.data.path.append(os.path.join(os.getcwd(), 'static', 'nltk_data'))
 
 # Google YouTube API setup
 API_SERVICE_NAME = "youtube"
