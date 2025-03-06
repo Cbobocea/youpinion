@@ -86,29 +86,6 @@ def preprocess_comments(comments):
         cleaned_comments.append(comment)
     return cleaned_comments
 
-# Getting BERT embeddings
-def get_bert_embeddings(comments):
-    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-    model = BertModel.from_pretrained('bert-base-uncased')
-
-    embeddings = []
-
-    for comment in comments:
-        # Limit the length of the comment to avoid excessive input size
-        if len(comment) > 512:  # Adjust as appropriate
-            comment = comment[:512]
-
-        inputs = tokenizer(comment, return_tensors="pt", max_length=512, truncation=True, padding=True)
-
-        try:
-            outputs = model(**inputs)
-            embedding = outputs.last_hidden_state.mean(dim=1).detach().numpy()
-            embeddings.append(embedding)
-        except Exception as e:
-            logging.error(f"Error during model inference: {e}")
-            embeddings.append(np.zeros((768,)))  # Append a zero vector for failed cases
-
-    return np.array(embeddings).squeeze()
 
 # Clustering comments
 def cluster_comments(embeddings, n_clusters=5):
@@ -142,21 +119,33 @@ def main(video_id, n_clusters=5, max_comments=1000, batch_size=100):
     comments = get_youtube_comments(video_id, max_comments)
     cleaned_comments = preprocess_comments(comments)
 
-    all_embeddings = []
-    for i in range(0, len(cleaned_comments), batch_size):
-        batch_comments = cleaned_comments[i:i + batch_size]
-        embeddings = get_bert_embeddings(batch_comments)
-        all_embeddings.extend(embeddings)
+    # Summarize comments instead of getting embeddings
+    all_summaries = summarize_comments(cleaned_comments)
 
+    # You can perform clustering here based on the summaries
+    # For this, we need to obtain embeddings for the summaries
+    all_embeddings = []  # Initialize as empty
+
+    for i in range(0, len(all_summaries), batch_size):
+        batch_summaries = all_summaries[i:i + batch_size]
+
+        # Generate embeddings for the summary texts, you can use OpenAI embeddings here
+        try:
+            embeddings = get_openai_embeddings(batch_summaries)  # Create this function
+            all_embeddings.extend(embeddings)
+        except Exception as e:
+            logging.error(f"Error during embedding generation: {e}")
+            continue  # Skip this batch or handle as necessary
+
+    # Proceed to cluster comments based on their embeddings
     kmeans = cluster_comments(all_embeddings, n_clusters=n_clusters)
     clusters = kmeans.labels_
 
+    # Find most common cluster
     most_common_cluster, count = find_most_common_cluster(clusters)
 
-    # Extract comments belonging to the most common cluster
-    common_cluster_comments = [cleaned_comments[i] for i in range(len(clusters)) if clusters[i] == most_common_cluster]
-
-    save_clustered_comments(cleaned_comments, clusters)
+    # Extract summaries belonging to the most common cluster
+    common_cluster_comments = [all_summaries[i] for i in range(len(clusters)) if clusters[i] == most_common_cluster]
 
     return most_common_cluster, count, common_cluster_comments
 
@@ -202,10 +191,23 @@ def summarize_comments(comments):
     return summaries
 
 
+def get_openai_embeddings(comments):
+    embeddings = []
+    for comment in comments:
+        try:
+            response = openai.Embedding.create(
+                model="text-embedding-ada-001", # or another embedding model you prefer
+                input=comment
+            )
+            embedding = response['data'][0]['embedding']
+            embeddings.append(embedding)
+        except Exception as e:
+            logging.error(f"Error during embedding generation: {e}")
+            embeddings.append(np.zeros(1536)  # Assuming dimensionality of 1536 for this model
+    return np.array(embeddings)
 
 # Flask routes and logic
 from flask import redirect, url_for, flash, request
-
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
