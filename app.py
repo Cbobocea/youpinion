@@ -1,14 +1,12 @@
 import os
 import json
-import nltk
 import pandas as pd
 import numpy as np
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
-from transformers import BertTokenizer, BertModel, pipeline  # Ensure both are imported
-from flask import Flask, render_template, request , send_from_directory
+from flask import Flask, render_template, request , send_from_directory , redirect , url_for , flash , request
 import re
 from collections import Counter
 from openai.error import RateLimitError
@@ -33,8 +31,8 @@ API_VERSION = "v3"
 DEVELOPER_KEY = 'AIzaSyCnuvkeTxoZdFQifWc2624JpN5NvQcYj4Q'
 
 # Path to the service account key file in the Docker container
-credentials_path = '/app/service-account-key.json'
-
+#credentials_path = r'C:\Users\munianio\Downloads\service-account-key.json' # path for testing
+credentials_path = '/app/service-account-key.json'  # path for live
 # Load credentials from the service account key file
 credentials = service_account.Credentials.from_service_account_file(credentials_path)
 
@@ -133,11 +131,17 @@ def find_most_common_cluster(clusters):
     return most_common_cluster, count
 
 # Main execution function
-def main(video_id, n_clusters=5, max_comments=1000):
+def main(video_id, n_clusters=5, max_comments=1000, batch_size=100):
     comments = get_youtube_comments(video_id, max_comments)
     cleaned_comments = preprocess_comments(comments)
-    embeddings = get_bert_embeddings(cleaned_comments)
-    kmeans = cluster_comments(embeddings, n_clusters=n_clusters)
+
+    all_embeddings = []
+    for i in range(0, len(cleaned_comments), batch_size):
+        batch_comments = cleaned_comments[i:i + batch_size]
+        embeddings = get_bert_embeddings(batch_comments)
+        all_embeddings.extend(embeddings)
+
+    kmeans = cluster_comments(all_embeddings, n_clusters=n_clusters)
     clusters = kmeans.labels_
 
     most_common_cluster, count = find_most_common_cluster(clusters)
@@ -147,14 +151,16 @@ def main(video_id, n_clusters=5, max_comments=1000):
 
     save_clustered_comments(cleaned_comments, clusters)
 
-    return most_common_cluster, count, common_cluster_comments  # Return comments as well
+    return most_common_cluster, count, common_cluster_comments
 
 # Function to extract video ID from the URL
 def extract_video_id(url):
     if 'youtu.be' in url:
-        return url.split('/')[-1]
+        # For short links (youtu.be)
+        return url.split('/')[-1].split('?')[0]  # Split and remove any query parameters
     elif 'youtube.com' in url:
-        match = re.search(r'(?:v=|\/)([a-zA-Z0-9_-]{11})', url)  # Ensure this line is complete and correct
+        # For full links (youtube.com)
+        match = re.search(r'(?:v=|\/)([a-zA-Z0-9_-]{11})', url)
         if match:
             return match.group(1)
         match = re.search(r'\/embed\/([a-zA-Z0-9_-]{11})|\/watch\?v=([a-zA-Z0-9_-]{11})', url)
@@ -167,9 +173,10 @@ def summarize_comments(comments):
     summaries = []
     for comment in comments:
         text = comment[:512]  # Limit to relevant length
+        max_len = min(150, len(text))  # set max length based on input length
 
         try:
-            summary = summarizer(text, max_length=150, min_length=40, do_sample=False)
+            summary = summarizer(text, max_length=max_len, min_length=40, do_sample=False)
             summaries.append(summary[0]['summary_text'])
         except Exception as e:
             logging.error(f"Error during summarization: {e}")
@@ -179,6 +186,9 @@ def summarize_comments(comments):
 
 
 # Flask routes and logic
+from flask import redirect, url_for, flash, request
+
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
@@ -192,13 +202,23 @@ def home():
             # Call the summarization function
             summary = summarize_comments(common_cluster_comments)
 
-            result = f"The most common cluster is {most_common_cluster} with {count} comments. Here’s a summary:\n\n{summary}"
-        else:
-            result = "Invalid YouTube link. Please try again."
+            # Redirect to results page with necessary data passed as query parameters
+            return redirect(url_for('results', cluster=most_common_cluster, count=count, summary=summary))
 
-        return render_template('index.html', result=result)
+        else:
+            flash("Invalid YouTube link. Please try again.")  # Use flash for user-friendly messages
+            return redirect(url_for('home'))
 
     return render_template('index.html')
+
+
+@app.route('/results')
+def results():
+    cluster = request.args.get('cluster')
+    count = request.args.get('count')
+    summary = request.args.get('summary')
+
+    return render_template('results.html', cluster=cluster, count=count, summary=summary)
 
 
 
