@@ -14,6 +14,10 @@ from collections import Counter
 from openai.error import RateLimitError
 from transformers import BertTokenizer, BertModel, pipeline
 import nltk
+import logging
+
+#Set up logging
+logging.basicConfig(level=logging.DEBUG)
 
 
 app = Flask(__name__)
@@ -83,11 +87,22 @@ def get_bert_embeddings(comments):
     model = BertModel.from_pretrained('bert-base-uncased')
 
     embeddings = []
+
     for comment in comments:
+        # Limit the length of the comment to avoid excessive input size
+        if len(comment) > 512:  # Adjust as appropriate
+            comment = comment[:512]
+
         inputs = tokenizer(comment, return_tensors="pt", max_length=512, truncation=True, padding=True)
-        outputs = model(**inputs)
-        embedding = outputs.last_hidden_state.mean(dim=1).detach().numpy()
-        embeddings.append(embedding)
+
+        try:
+            outputs = model(**inputs)
+            embedding = outputs.last_hidden_state.mean(dim=1).detach().numpy()
+            embeddings.append(embedding)
+        except Exception as e:
+            logging.error(f"Error during model inference: {e}")
+            embeddings.append(np.zeros((768,)))  # Append a zero vector for failed cases
+
     return np.array(embeddings).squeeze()
 
 # Clustering comments
@@ -149,11 +164,18 @@ def extract_video_id(url):
 
 # Function to summarize comments
 def summarize_comments(comments):
-    text = "\n".join(comments)  # Combine the comments into a single string
+    summaries = []
+    for comment in comments:
+        text = comment[:512]  # Limit to relevant length
 
-    # Use the Hugging Face transformers pipeline to summarize comments
-    summary = summarizer(text, max_length=150, min_length=40, do_sample=False)  # Adjust parameters as needed
-    return summary[0]['summary_text']  # Extract the summary text
+        try:
+            summary = summarizer(text, max_length=150, min_length=40, do_sample=False)
+            summaries.append(summary[0]['summary_text'])
+        except Exception as e:
+            logging.error(f"Error during summarization: {e}")
+            summaries.append("Error summarizing comment.")
+
+    return summaries
 
 
 # Flask routes and logic
