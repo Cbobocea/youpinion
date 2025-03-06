@@ -1,5 +1,7 @@
 import os
 import json
+
+import openai
 import pandas as pd
 import numpy as np
 from google.oauth2 import service_account
@@ -30,9 +32,14 @@ API_SERVICE_NAME = "youtube"
 API_VERSION = "v3"
 DEVELOPER_KEY = 'AIzaSyCnuvkeTxoZdFQifWc2624JpN5NvQcYj4Q'
 
+# Configure OpenAI API key
+openai.api_key = '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'  # Replace with your actual OpenAI API key
+
 # Path to the service account key file in the Docker container
-#credentials_path = r'C:\Users\munianio\Downloads\service-account-key.json' # path for testing
-credentials_path = '/app/service-account-key.json'  # path for live
+credentials_path = r'C:\Users\munianio\Downloads\service-account-key.json' # path for testing
+#credentials_path = '/app/service-account-key.json'  # path for live
+
+
 # Load credentials from the service account key file
 credentials = service_account.Credentials.from_service_account_file(credentials_path)
 
@@ -168,21 +175,32 @@ def extract_video_id(url):
             return match.group(1) or match.group(2)
     return None
 
-# Function to summarize comments
+#Function to summarize comments ( Open AI embedded)
 def summarize_comments(comments):
     summaries = []
-    for comment in comments:
-        text = comment[:512]  # Limit to relevant length
-        max_len = min(150, len(text))  # set max length based on input length
+    concatenated_comments = ' '.join(comments)  # Combine comments into one string
+    text = concatenated_comments[:250]  # Limit total input length
 
-        try:
-            summary = summarizer(text, max_length=max_len, min_length=40, do_sample=False)
-            summaries.append(summary[0]['summary_text'])
-        except Exception as e:
-            logging.error(f"Error during summarization: {e}")
-            summaries.append("Error summarizing comment.")
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "user", "content": f"Provide a summary of the following comments: {text}"}
+            ],
+            max_tokens=100  # Adjust as needed
+        )
+        summary = response['choices'][0]['message']['content']
+
+        # Simplify the response to remove specific attributions
+        summary = summary.replace("The speaker ", "Here is the summary: ")
+
+        summaries.append(summary or "Summary could not be generated.")
+    except Exception as e:
+        logging.error(f"Error during summarization: {e}")
+        summaries.append("Error summarizing comments.")
 
     return summaries
+
 
 
 # Flask routes and logic
