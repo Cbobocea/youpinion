@@ -1,0 +1,18 @@
+runtime: python39 # Use Python 3.9; adjust if your project uses a different version.
+
+# The command to start your application.
+entrypoint: gunicorn -b :$PORT app:app # Replace 'app' with the name of your Flask app module if it's different.
+
+# Automatic setting for the web handler
+handlers:
+  - url: /.*
+    script: auto
+
+# Optional: If you have static files like CSS or images, define a handler for them.
+# - url: /static
+#   static_dir: static  # This assumes your static files are in a directory called 'static'.
+
+env: standard # Use 'standard' environment for App Engine.
+
+# Optional: Set the instance class if needed (standard, F1 is free-tier but limited).
+# instance_class: F1

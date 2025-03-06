@@ -1,0 +1,11 @@
+# Ignore Python cache and other unnecessary files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+.git
+.gitignore
+.env
+.venv
+*.log

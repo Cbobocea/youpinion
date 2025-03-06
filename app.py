@@ -27,7 +27,12 @@ nltk.data.path.append(os.path.join(os.getcwd(), 'nltk_data'))
 API_SERVICE_NAME = "youtube"
 API_VERSION = "v3"
 DEVELOPER_KEY = 'AIzaSyCnuvkeTxoZdFQifWc2624JpN5NvQcYj4Q'
-credentials_path = r'C:\Users\munianio\Downloads\service-account-key.json'  # Change to your path
+
+# Path to the service account key file in the Docker container
+credentials_path = '/app/service-account-key.json'
+
+# Load credentials from the service account key file
+credentials = service_account.Credentials.from_service_account_file(credentials_path)
 
 # Stop words for text processing
 stop_words = set(stopwords.words('english'))
