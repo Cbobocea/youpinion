@@ -34,8 +34,8 @@ DEVELOPER_KEY = 'AIzaSyCnuvkeTxoZdFQifWc2624JpN5NvQcYj4Q'
 openai.api_key = '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'  # Replace with your actual OpenAI API key
 
 # Path to the service account key file in the Docker container
-credentials_path = r'C:\Users\munianio\Downloads\service-account-key.json'  # path for testing
-# credentials_path = '/app/service-account-key.json'  # path for live
+#credentials_path = r'C:\Users\munianio\Downloads\service-account-key.json'  # path for testing
+credentials_path = '/app/service-account-key.json'  # path for live
 
 # Load credentials from the service account key file
 credentials = service_account.Credentials.from_service_account_file(credentials_path)
