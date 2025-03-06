@@ -1,37 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>YouTube Comment Analysis</title>
-    <style>
-      .warning {
-        color: red; /* You can customize the styling */
-        font-weight: bold;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Enter YouTube Link</h1>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube CommentScraper</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css">
+    <script>
+        function showLoadingMessage() {
+            document.getElementById("loadingMessage").style.display = "block";
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>YouTube Comment Summarizer</h1>
+        <form method="POST" onsubmit="showLoadingMessage()">
+            <label for="youtube_link">Enter YouTube Link:</label>
+            <input type="text" name="youtube_link" id="youtube_link" required>
+            <button type="submit" class="btn btn-primary">Summarize</button>
+        </form>
 
-    <!-- Placeholder warning message -->
-    <p class="warning">
-      Please note: This is very early access. Responses may not be optimal!
-    </p>
+        <div id="loadingMessage" style="display:none;">
+            <h2>Please sit tight, the summarization will be provided shortly!</h2>
+        </div>
 
-    <form method="POST">
-      <input
-        type="text"
-        name="youtube_link"
-        placeholder="Enter YouTube link"
-        required
-      />
-      <button type="submit">Submit</button>
-    </form>
+        <!-- Add the note here -->
+        <footer>
+            <p class="mt-4">Functionality Overview:
 
-    {% if result %}
-    <h2>Result:</h2>
-    <p>{{ result }}</p>
-    <!-- Display the result -->
-    {% endif %}
-  </body>
+              The application retrieves comments from YouTube based on a provided video link.
+            Multiple model interfaces including OpenAI, processes the comments to clean and summarize them.
+            Comments are then clustered and once again the models are picking the most important cluster based on an NTLK process.</p>
+            Finally OpenAi summrizes the last cluster and provides the final result.
+        </footer>
+
+        {% if result %}
+            <h3>Result:</h3>
+            <p>{{ result }}</p>
+        {% endif %}
+    </div>
+</body>
 </html>
