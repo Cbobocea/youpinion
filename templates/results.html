@@ -5,21 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Summarization Results</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Optional styles for typing effect */
+        .typing-effect {
+            border-right: 2px solid;
+            white-space: pre-wrap; /* Allows line breaks and preserves spaces */
+            overflow: hidden;
+        }
+
+        @keyframes caret {
+            50% {
+                border-color: transparent;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>Summarization Results</h1>
 
-        <!-- Instead of displaying common cluster info, show a more generic message -->
-        <h4></h4>
+        <h5></h5>
+        <p id="summaryText" class="typing-effect" style="display: inline;"></p>
 
-        <h5>Summary:</h5>
-        <p>{{ summary }}</p>
-
-        <!-- Optionally, you can provide more context depending on your needs -->
         <p>These comments reflect the overall sentiments regarding the video content.</p>
 
         <a href="{{ url_for('home') }}" class="btn btn-primary">Back to Home</a>
     </div>
+
+    <script>
+        // Typing effect function
+        function typeText(text, elementId, delay = 100) {
+            let element = document.getElementById(elementId);
+            element.innerText = ''; // Clear the element
+
+            // Split the text by spaces and line breaks
+            const words = text.split(/(\s+)/); // Split on whitespace while keeping the spaces
+            let index = 0; // Start at the beginning of the string
+
+            // Function to type one piece (word or space) at a time
+            function type() {
+                if (index < words.length) {
+                    // Add the next word or space
+                    element.innerText += words[index];
+                    index++;
+                    setTimeout(type, delay); // Call the function again after a delay
+                }
+            }
+
+            type(); // Start typing
+        }
+
+        // Call the function with the summary text and the delay
+        document.addEventListener('DOMContentLoaded', function() {
+            const summary = "{{ summary }}"; // Example summary text from your backend
+            typeText(summary, 'summaryText', 200); // Adjust the delay as desired
+        });
+    </script>
 </body>
 </html>
