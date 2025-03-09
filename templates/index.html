@@ -3,35 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube CommentScraper</title>
+    <title>OpenAI CommentScraper</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css">
+    <style>
+        /* Ensure the body takes full height */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Full viewport height */
+        }
+
+        /* Center the footer */
+        .footer {
+            margin-top: auto; /* Pushes the footer to the bottom */
+            text-align: center; /* Centers text */
+            padding: 20px; /* Adds some padding */
+        }
+    </style>
+    <style>
+        /* Spinner styles */
+        #loadingSpinner {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000; /* Make sure it's on top */
+        }
+        /* Blur effect */
+        .blurred {
+            filter: blur(5px);
+            pointer-events: none; /* Prevent interaction while loading */
+        }
+        }
+        /* Custom margin class */
+        .custom-margin {
+            margin-top: -100px; /* Adjust this value according to your needs */
+        }
+    </style>
     <script>
         function showLoadingMessage() {
-            document.getElementById("loadingMessage").style.display = "block";
+            // Show the spinner
+            document.getElementById("loadingSpinner").style.display = "block";
+            // Blur the content
+            document.body.classList.add('blurred');
+        }
+
+        $(document).ready(function(){
+            $('#modalTabs').modal({
+                show: false
+            });
+        });
+
+        function updateModalContent(infoType) {
+            let content;
+            let title;
+
+            switch(infoType) {
+                case 'info1':
+                    title = 'Project Overview';
+                    content = `<p>1 Imports and Setup: Various libraries are imported, including Flask for web development, OpenAI for language processing, Google API client for accessing YouTube, NLTK for text processing, and Sklearn for clustering.
+                                  2 YouTube API Setup: The program initializes the YouTube API service and sets up the credentials needed to access YouTube comments.
+                                  3 Fetching Comments: The get_youtube_comments function retrieves comments from a YouTube video using its video ID, limited to a specified number of comments (default is 1000).
+                                    It makes paginated API requests to gather comments until the max limit or no more comments are available.
+                                  4 Preprocessing Comments: The preprocess_comments function cleans the fetched comments by converting them to lowercase and removing common English stopwords (e.g., "the," "is").
+                                  5 Summarizing Comments: The summarize_comments function combines all cleaned comments into a single string and sends it to OpenAI's GPT model for summarization. The result is a concise summary of the comments.
+                                  6 Generating Embeddings: The get_openai_embeddings function generates numerical representations (embeddings) for the summaries of comments, which can be used for clustering.
+                                  7 Clustering Comments: The cluster_comments function uses KMeans clustering to group the embeddings into specified clusters. This helps in identifying patterns or common themes in the comments.
+                                  8 Finding Common Clusters: The find_most_common_cluster function identifies the most frequent cluster of comments, indicating the dominant topic or sentiment.
+                                  9 Main Execution Flow: The main function orchestrates the entire process:
+                                    It gets comments, preprocesses them, summarizes, generates embeddings, clusters them, and finds the most common cluster.
+                                    Finally, it returns the insights like the most common cluster, its count, and related comments.
+                                  10 Web Application Routing: The Flask application has two main routes:
+                                     Home Route (/): This is the main page where users can submit a YouTube link. Upon submission, it extracts the video ID and triggers the main processing flow.
+                                     Results Route (/results): Displays the summary of comments along with statistical information about the clustering results.
+                                  11 Error Handling: The application includes error handling for API requests, memory issues, and invalid input, ensuring graceful failure and user feedback.</p>`;
+                    break;
+                case 'info2':
+                    title = 'Support the Project';
+                    content = `<p>Support the project by donating!</p>
+                               <button type="button" class="btn btn-secondary" onclick="window.open('https://checkout.revolut.com/pay/6cf7865f-9326-47b1-92dd-48389e07d1e2', '_blank')">
+                               (Donate)
+                               </button>`;
+                    break;
+                case 'info3':
+                    title = 'Technologies Used';
+                    content = `<p>Flask, HTML/CSS, Bootstrap, JavaScript & jQuery, YouTube Data API, OpenAI API, NLTK, Pandas, NumPy, Scikit-Learn, Logging.</p>`;
+                    break;
+                default:
+                    title = 'Information';
+                    content = `<p>No information available.</p>`;
+            }
+
+            document.getElementById('modalLabel').innerText = title;
+            document.getElementById('modalBody').innerHTML = content;
         }
     </script>
 </head>
 <body>
     <div class="container">
         <h1>YouTube Comment Summarizer</h1>
+
+        <!-- Loading Spinner -->
+        <div id="loadingSpinner">
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+
+        <!-- Buttons Section -->
+        <div class="mb-3">
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modalTabs" onclick="updateModalContent('info1')">
+                Nerd Info
+            </button>
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#modalTabs" onclick="updateModalContent('info2')">
+                Keep this project alive!
+            </button>
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalTabs" onclick="updateModalContent('info3')">
+                Technologies
+            </button>
+        </div>
+
+
+
         <form method="POST" onsubmit="showLoadingMessage()">
             <label for="youtube_link">Enter YouTube Link:</label>
             <input type="text" name="youtube_link" id="youtube_link" required>
-            <button type="submit" class="btn btn-primary">Summarize</button>
+            <button type="submit" class="btn btn-primary btn-sm custom-margin">Summarize</button>
         </form>
 
         <div id="loadingMessage" style="display:none;">
             <h2>Please sit tight, the summarization will be provided shortly!</h2>
         </div>
 
-        <!-- Add the note here -->
         <footer>
-            <p class="mt-4">Functionality Overview:
-
-              The application retrieves comments from YouTube based on a provided video link.
-            Multiple model interfaces including OpenAI, processes the comments to clean and summarize them.
-            Comments are then clustered and once again the models are picking the most important cluster based on an NTLK process.</p>
-            Finally OpenAi summrizes the last cluster and provides the final result.
+            <!-- Additional footer content can be added here -->
         </footer>
 
         {% if result %}
@@ -39,5 +145,34 @@
             <p>{{ result }}</p>
         {% endif %}
     </div>
+ <!-- Updated Modal -->
+    <div class="modal fade" id="modalTabs" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="border-radius: 10px;">
+                <div class="modal-header" style="border-bottom: none;">
+                    <h5 class="modal-title" id="modalLabel"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalBody" style="text-align: left; padding: 20px;">
+                    <!-- Content will be updated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
+     <!-- Copyright Notice -->
+    <div class="footer">
+        <p>&copy; <span id="year"></span> Powered by OpenAI</p>
+    </div>
+
+    <script>
+        // Set the current year in the copyright notice
+        document.getElementById('year').innerText = new Date().getFullYear();
+    </script>
 </body>
 </html>
