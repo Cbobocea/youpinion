@@ -7,10 +7,22 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         /* Optional styles for typing effect */
+        body {
+            background-color: #f0f0f0; /* Light grey background */
+        }
+
+        .container {
+            background-color: white; /* White background for the content */
+            padding: 20px; /* Padding for content */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+
         .typing-effect {
             border-right: 2px solid;
             white-space: pre-wrap; /* Allows line breaks and preserves spaces */
             overflow: hidden;
+            display: inline-block; /* Ensure the effect applies properly */
         }
 
         @keyframes caret {
@@ -22,12 +34,15 @@
 </head>
 <body>
     <div class="container">
-        <h1>Summarization Results</h1>
+        <h1></h1>
 
-        <h5></h5>
+        <div class="alert alert-info" role="alert">
+            The following comments reflect the overall sentiments regarding the video content.
+        </div>
+
         <p id="summaryText" class="typing-effect" style="display: inline;"></p>
 
-        <p>These comments reflect the overall sentiments regarding the video content.</p>
+        <p></p>
 
         <a href="{{ url_for('home') }}" class="btn btn-primary">Back to Home</a>
     </div>
@@ -61,5 +76,10 @@
             typeText(summary, 'summaryText', 200); // Adjust the delay as desired
         });
     </script>
+
+    <footer class="text-center py-4">
+        <p>&copy; <span id="year"></span> Powered by OpenAI</p>
+    </footer>
+
 </body>
 </html>

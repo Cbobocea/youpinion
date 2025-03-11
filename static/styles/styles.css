@@ -1,0 +1,147 @@
+body {
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    min-height: 100vh; /* Full viewport height */
+    margin: 0; /* Remove default margin */
+    background-color: #bfbfbf; /* Light grey */
+    position: relative; /* Set body position to relative for proper z-index stacking */
+}
+
+main {
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    justify-content: center; /* Center vertically */
+    align-items: center; /* Center horizontally */
+    flex-grow: 1; /* Allow main content to expand to fill available space */
+    text-align: center; /* Center the text */
+}
+
+header {
+    background-color: #ffffff; /* Header background */
+    border-bottom: 1px solid #ddd; /* Subtle border */
+}
+
+.custom-title {
+    font-size: 1rem; /* Adjust this value to be smaller */
+    margin-left: 20px; /* Keep the left margin if needed */
+}
+
+
+h1 {
+    font-size: 1rem; /* Smaller size, adjust as needed */
+    margin-left: 20px; /* Move it towards the left */
+    font-weight: bold;
+    font-family: 'Playfair Display', sans-serif; /* Use your chosen font */
+}
+
+footer {
+    background-color: #ffffff; /* Footer background */
+    border-top: 1px solid #ddd; /* Subtle border */
+}
+
+.custom-image {
+    max-width: 100%; /* Default size for desktop */
+    height: auto; /* Maintain aspect ratio */
+}
+
+/* Media query for larger screens */
+@media (min-width: 769px) {
+    .tiktok-image {
+        margin-right: 255px; /* Adjust margin-right for TikTok image on larger screens */
+    }
+
+    .facebook-image {
+        margin-left: 255px; /* Adjust margin-left for Facebook image on larger screens */
+    }
+
+    .d-flex > .btn {
+        margin-left: 15px; /* Add space between buttons */
+    }
+}
+
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+    .tiktok-image {
+        margin-right: 10px; /* Adjust margin-right for TikTok image on larger screens */
+    }
+
+    .facebook-image {
+        margin-left: 10px; /* Adjust margin-left for Facebook image on larger screens */
+    }
+
+    .d-flex > .btn {
+        margin-left: 15px; /* Add space between buttons */
+    }
+
+    header {
+        justify-content: center; /* Center header content */
+    }
+
+    .d-flex { /* Selector for the button container */
+        justify-content: center; /* Center buttons horizontally */
+        width: 100%; /* Ensure they take full width */
+    }
+
+    .btn {
+        margin: 5px; /* Space between buttons */
+    }
+}
+
+@keyframes scaleAnimation {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.05); } /* Scale slightly up */
+    70% { transform: scale(1.1); } /* Scale up more */
+    100% { transform: scale(1); } /* Scale back */
+}
+.youtube-animation {
+    animation: scaleAnimation 2s ease; /* Shortened duration */
+}
+
+
+.btn-custom-about {
+    background-color: #bfbfbf; /* Your chosen color */
+    color: black; /* Text color */
+    font-weight: bold;
+    font-family: 'Playfair Display', sans-serif; /* Use your chosen font */
+}
+.btn-custom-about:hover {
+    background-color: #bfbfbf; /* Darker shade for hover effect */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+
+.btn-custom-donate {
+    background-color: #bfbfbd; /* Your chosen color */
+    color: black; /* Text color */
+    font-weight: bold;
+    font-family: 'Playfair Display', sans-serif; /* Use your chosen font */
+}
+.btn-custom-donate:hover {
+    background-color: #bfbfbd; /* Darker shade for hover effect */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+.btn-custom-summarize {
+    background-color: red; /* Set your desired background color */
+    color: white; /* Text color */
+    border: none; /* Remove default border */
+    border-radius: 25px; /* Rounded edges for a modern look */
+    padding: 10px 20px; /* Padding for a better feel */
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
+    font-weight: bold; /* Bold text */
+    text-transform: uppercase; /* Uppercase text for a modern look */
+    font-family: 'Playfair Display', sans-serif; /* Use your chosen font */
+}
+
+.btn-custom-summarize:hover {
+    background-color: #bfbfbd; /* Darker shade for hover effect */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+.coming-soon-text {
+    font-size: 1rem; /* Adjust the font size as needed */
+    margin-top: 10px; /* Add some space above the text */
+    color: #333; /* Change text color if desired */
+    font-weight: bold; /* Bold text */
+    font-family: 'Playfair Display', sans-serif; /* Use your chosen font */
+}
