@@ -13,6 +13,7 @@ from collections import Counter
 from openai.error import RateLimitError
 import nltk
 import logging
+from datetime import datetime
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -34,8 +35,8 @@ DEVELOPER_KEY = 'AIzaSyCnuvkeTxoZdFQifWc2624JpN5NvQcYj4Q'
 openai.api_key = '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'  # Replace with your actual OpenAI API key
 
 # Path to the service account key file in the Docker container
-#credentials_path = r'C:\Users\munianio\Downloads\service-account-key.json'  # path for testing
-credentials_path = '/app/service-account-key.json'  # path for live
+credentials_path = r'C:\Users\munianio\Downloads\service-account-key.json'  # path for testing
+#credentials_path = '/app/service-account-key.json'  # path for live
 
 # Load credentials from the service account key file
 credentials = service_account.Credentials.from_service_account_file(credentials_path)
@@ -211,6 +212,7 @@ def extract_video_id(url):
 # Flask routes and logic
 @app.route('/', methods=['GET', 'POST'])
 def home():
+    current_year = datetime.now().year  # Get the current year
     if request.method == 'POST':
         youtube_link = request.form['youtube_link']
         video_id = extract_video_id(youtube_link)
@@ -224,12 +226,11 @@ def home():
 
             # Redirect to results page with necessary data passed as query parameters
             return redirect(url_for('results', cluster=most_common_cluster, count=count, summary=summary))
-
         else:
             flash("Invalid YouTube link. Please try again.")
             return redirect(url_for('home'))
 
-    return render_template('index.html')
+    return render_template('index.html', year=current_year)  # Pass the year to the template
 
 
 @app.route('/results')
@@ -239,6 +240,11 @@ def results():
     summary = request.args.get('summary')
 
     return render_template('results.html', cluster=cluster, count=count, summary=summary)
+
+# New route for the About page
+@app.route('/about')
+def about():
+    return render_template('about.html')  # Ensure you have about.html in your templates folder
 
 
 if __name__ == '__main__':
