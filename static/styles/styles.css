@@ -1,10 +1,15 @@
 body {
     display: flex;
-    flex-direction: column; /* Stack elements vertically */
-    min-height: 100vh; /* Full viewport height */
-    margin: 0; /* Remove default margin */
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
     background-color: #bfbfbf; /* Light grey */
-    position: relative; /* Set body position to relative for proper z-index stacking */
+    background-image: url('{{ url_for('static', filename='images/mrrobot.png') }}'); /* Path to your image */
+    background-size: cover; /* Cover the whole body */
+    background-repeat: no-repeat; /* No tiling */
+    background-position: center; /* Center the image */
+    background-attachment: fixed; /* Optional for fixed positioning */
+    position: relative; /* Keep element stacking in order */
 }
 
 main {
@@ -62,15 +67,15 @@ footer {
 /* Media query for mobile devices */
 @media (max-width: 768px) {
     .tiktok-image {
-        margin-right: 10px; /* Adjust margin-right for TikTok image on larger screens */
+        margin-right: 45px; /* Adjust margin-right for TikTok image on larger screens */
     }
 
     .facebook-image {
-        margin-left: 10px; /* Adjust margin-left for Facebook image on larger screens */
+        margin-left: 45px; /* Adjust margin-left for Facebook image on larger screens */
     }
 
     .d-flex > .btn {
-        margin-left: 15px; /* Add space between buttons */
+        margin-left: 13px; /* Add space between buttons */
     }
 
     header {
@@ -83,18 +88,8 @@ footer {
     }
 
     .btn {
-        margin: 5px; /* Space between buttons */
+        margin: 1px; /* Space between buttons */
     }
-}
-
-@keyframes scaleAnimation {
-    0% { transform: scale(1); }
-    35% { transform: scale(1.05); } /* Scale slightly up */
-    70% { transform: scale(1.1); } /* Scale up more */
-    100% { transform: scale(1); } /* Scale back */
-}
-.youtube-animation {
-    animation: scaleAnimation 2s ease; /* Shortened duration */
 }
 
 
@@ -139,9 +134,42 @@ footer {
 }
 
 .coming-soon-text {
-    font-size: 1rem; /* Adjust the font size as needed */
-    margin-top: 10px; /* Add some space above the text */
-    color: #333; /* Change text color if desired */
-    font-weight: bold; /* Bold text */
+    font-size: 1rem;
+    margin-top: 10px;
+    color: white; /* Change text color for visibility */
+    font-weight: bold;
     font-family: 'Playfair Display', sans-serif; /* Use your chosen font */
+    /*background-color: rgba(0, 0, 0, 0.6); /* Semitransparent black background */
+    padding: 8px; /* Add some padding around the text */
+    border-radius: 5px; /* Optional: Rounded corners */
+}
+
+body.custom-background {
+    background-image: url(''); /* Leave it empty for now */
+}
+
+.footer-link {
+    color: #333; /* Change this to fit your color scheme */
+    text-decoration: none; /* Remove underline */
+}
+
+.footer-link:hover {
+    text-decoration: underline; /* Underline on hover for clarity */
+}
+
+
+.invalid-feedback {
+    display: block; /* Show block to ensure it's visible */
+    color: red; /* Customize error text color */
+    font-size: 0.875rem; /* Slightly smaller text for error */
+}
+
+@keyframes scaleAnimation {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); } /* Scale slightly up */
+    100% { transform: scale(1); } /* Scale back */
+}
+
+.youtube-animation {
+    animation: scaleAnimation 1s ease infinite; /* Add your animation duration here */
 }
