@@ -35,8 +35,8 @@ DEVELOPER_KEY = 'AIzaSyCnuvkeTxoZdFQifWc2624JpN5NvQcYj4Q'
 openai.api_key = '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'  # Replace with your actual OpenAI API key
 
 # Path to the service account key file in the Docker container
-credentials_path = r'C:\Users\munianio\Downloads\service-account-key.json'  # path for testing
-#credentials_path = '/app/service-account-key.json'  # path for live
+#credentials_path = r'C:\Users\munianio\Downloads\service-account-key.json'  # path for testing
+credentials_path = '/app/service-account-key.json'  # path for live
 
 # Load credentials from the service account key file
 credentials = service_account.Credentials.from_service_account_file(credentials_path)
@@ -232,7 +232,7 @@ def home():
 
     return render_template('index.html', year=current_year)  # Pass the year to the template
 
-
+#results route
 @app.route('/results')
 def results():
     cluster = request.args.get('cluster')
@@ -241,10 +241,38 @@ def results():
 
     return render_template('results.html', cluster=cluster, count=count, summary=summary)
 
+#Terms&Cond route
+@app.route('/terms')
+def terms():
+    return render_template('terms.html')  # Make sure this template exists in your templates folder
+#Privacy route
+@app.route('/privacy')
+def privacy():
+    return render_template('privacy.html')  # Ensure privacy.html is in your templates folder
+
+
 # New route for the About page
 @app.route('/about')
 def about():
     return render_template('about.html')  # Ensure you have about.html in your templates folder
+
+#Contact us route
+@app.route('/submit_contact', methods=['POST'])
+def submit_contact():
+    # Here you would process the form data, e.g. save it to a database or send an email
+    name = request.form['name']
+    email = request.form['email']
+    subject = request.form['subject']
+    message = request.form['message']
+
+    # Process the contact message (e.g., send an email, save to a database)
+
+    flash("Thank you for your message! We'll get back to you soon.")
+    return redirect(url_for('home'))  # Redirect back to the home page or another page
+
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
 
 
 if __name__ == '__main__':

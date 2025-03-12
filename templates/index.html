@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comment Summarizer</title>
+    <title>Free Comment Analyzer</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}"> <!-- Optional -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
 
 </head>
-<body>
+<body style="background-image: url('{{ url_for('static', filename='images/mrrobot.png') }}');">
 
     <header class="d-flex justify-content-between align-items-center py-4" style="padding: 0 20px;">
         <h1 class="custom-title">Comment Summarizer</h1>
@@ -25,56 +25,102 @@
         <!-- TikTok Image -->
         <div class="text-center tiktok-image" style="width: 25%;">
             <img src="{{ url_for('static', filename='images/tiktok.png') }}" alt="Coming Soon" class="img-fluid custom-image">
-            <p class="coming-soon-text">Coming Soon</p> <!-- Added custom class -->
+            <p class="coming-soon-text">Coming Soon</p>
         </div>
 
         <!-- Existing YouTube Image -->
-            <div class="text-center" style="width: 35%;" id="youtubeContainer">
-                <img id="youtubeImage" src="{{ url_for('static', filename='images/youtube.png') }}" alt="YouTube Logo" class="img-fluid custom-image">
-            </div>
+        <div class="text-center" style="width: 35%;" id="youtubeContainer">
+         <img id="youtubeImage" src="{{ url_for('static', filename='images/youtube.png') }}" alt="YouTube Logo" class="img-fluid custom-image">
+        </div>
 
         <!-- Facebook Image -->
         <div class="text-center facebook-image" style="width: 25%;">
             <img src="{{ url_for('static', filename='images/facebook.png') }}" alt="Facebook Logo" class="img-fluid custom-image">
-            <p class="coming-soon-text">Coming Soon</p> <!-- Added custom class -->
+            <p class="coming-soon-text">Coming Soon</p>
         </div>
     </div>
 
-      <!-- Form Section -->
-<div class="text-center mt-4">
-    <form method="POST" onsubmit="showLoadingMessage()">
+    <!-- Form Section -->
+    <div class="text-center mt-4">
+    <form id="youtubeForm" method="POST" onsubmit="showLoadingMessage(event)">
         <div class="form-group">
             <label for="youtube_link"></label>
-            <input type="text" name="youtube_link" id="youtube_link" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+            <input type="text" name="youtube_link" id="youtube_link" class="form-control" placeholder="https://www.youtube.com/watch?v=..." required>
+            <div id="error-message" class="invalid-feedback"></div> <!-- Error message div -->
         </div>
         <button type="submit" class="btn btn-custom-summarize">Summarize</button>
     </form>
 
     <div id="loadingMessage" style="display:none;">
-        <h2>Please sit tight, the summarization will be provided shortly!</h2>
+        <h2></h2>
     </div>
-</div>
+    </div>
     </main>
 
     <footer class="text-center py-4">
     <p>&copy; <span id="year">{{ year }}</span> Powered by OpenAI</p>
+    <p>
+        <a href="{{ url_for('privacy') }}" class="footer-link">Privacy Policy |</a>
+        <a href="{{ url_for('terms') }}" class="footer-link">Terms & Conditions |</a>
+        <a href="{{ url_for('contact') }}" class="footer-link">Contact Us</a>
+    </p>
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script>
-        function showLoadingMessage() {
-    // Add animation class to the YouTube image
-    document.getElementById("youtubeImage").classList.add("youtube-animation");
 
-    // Hide the YouTube image after the animation duration
+    <!--Script for invalid link-->
+    <script>
+    function validateForm() {
+        const inputField = document.getElementById("youtube_link");
+        const errorMessage = document.getElementById("error-message");
+        const urlPattern = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/; // Regex for YouTube links
+
+        errorMessage.innerText = ""; // Clear previous error messages
+
+        if (!urlPattern.test(inputField.value)) {
+            errorMessage.innerText = "Please enter a valid YouTube link.";
+            inputField.classList.add("is-invalid"); // Add bootstrap invalid class
+            return false; // Prevent form submission
+        }
+
+        inputField.classList.remove("is-invalid"); // Remove invalid class if valid
+        return true; // Allow form submission
+    }
+    </script>
+<!--Loading animation-->
+    <script>
+     function showLoadingMessage(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    const youtubeImage = document.getElementById("youtubeImage");
+    const inputField = document.getElementById("youtube_link");
+    const errorMessage = document.getElementById("error-message");
+    const urlPattern = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/; // Regex for YouTube links
+
+    // Clear previous error messages
+    errorMessage.innerText = "";
+    inputField.classList.remove("is-invalid"); // Remove any existing invalid class
+
+    // Validate the link
+    if (!urlPattern.test(inputField.value)) {
+        errorMessage.innerText = "Please enter a valid YouTube link.";
+        inputField.classList.add("is-invalid"); // Add bootstrap invalid class
+        return; // Exit the function if invalid
+    }
+
+    // Add animation class if valid link
+    youtubeImage.classList.add("youtube-animation");
+    document.getElementById("loadingMessage").style.display = "block"; // Show loading message
+
+    // Simulate a delay for demo purposes (replace with your actual logic)
     setTimeout(() => {
-        document.getElementById("youtubeImage").style.display = "none"; // Hide after animation
-        document.getElementById("loadingImage").style.display = "block"; // Show the loading image
-        document.body.classList.add('blurred'); // Blur the content
-    }, 6000); // Match timeout with animation duration
-}   </script>
+        // This should submit the form
+        document.getElementById("youtubeForm").submit();
+    }, 4000); // Adjust duration according to actual loading time
+}
+    </script>
 
 </body>
 </html>
